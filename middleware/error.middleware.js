@@ -66,8 +66,19 @@ export const handleMongoError = (err) => {
 };
 
 // Handle JWT errors
-export const handleJWTError = () => 
+export const handleJWTError = () =>
     new AppError('Invalid token. Please log in again!', 401);
 
-export const handleJWTExpiredError = () => 
+export const handleJWTExpiredError = () =>
     new AppError('Your token has expired! Please log in again.', 401);
+
+
+// Custom Api Response Class 
+
+export class ApiResponse {
+    constructor(statusCode = 200, data = {}, message = 'Data Fetched Successfully') {
+        this.statusCode = statusCode,
+            this.data = data,
+            this.message = message
+    }
+}

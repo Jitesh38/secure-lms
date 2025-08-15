@@ -4,6 +4,7 @@ import { generateToken } from "../utils/generateToken.js";
 import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
 import { catchAsync } from "../middleware/error.middleware.js";
 import { AppError } from "../middleware/error.middleware.js";
+import { ApiResponse } from "../middleware/error.middleware.js";
 import crypto from "crypto";
 
 /**
@@ -12,6 +13,38 @@ import crypto from "crypto";
  */
 export const createUserAccount = catchAsync(async (req, res) => {
   // TODO: Implement create user account functionality
+
+  const { name, email, password, role, bio } = req.body;
+  let avatarPath = req.file?.path;
+
+  if ([name, email, password, role, bio].some((ele) => ele?.trim().length === 0 || !ele) || !avatarPath) {
+    throw new AppError('Please Provide all fields', 400);
+  }
+  // const uploadedAvatar = await uploadMedia(avatarPath);
+  const uploadedAvatar = `https://res.cloudinary.com/ddwgvjj4a/image/upload/v1755246021/hkhzrxz1jnscqqqruszd.jpg`;
+
+  const existedUSer = await User.findOne({
+    email
+  })
+
+  if (existedUSer) {
+    throw new AppError('Email or User already exist. Try new Credentials', 400)
+  }
+
+  const user = await User.create({
+    name,
+    email,
+    password,
+    role,
+    bio,
+    avatar: uploadedAvatar
+  })
+
+  if (!user) {
+    throw new AppError('Database error! Try after some time', 400)
+  }
+
+  res.status(201).json(new ApiResponse(201, user, "User created successfully"))
 });
 
 /**

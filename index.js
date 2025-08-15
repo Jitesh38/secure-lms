@@ -77,6 +77,7 @@ app.use("/api/v1/progress", courseProgressRoute);
 app.use("/api/v1/razorpay", razorpayRoute);
 app.use("/health", healthRoute);
 
+
 // 404 Handler
 app.use((req, res) => {
   res.status(404).json({
