@@ -52,7 +52,30 @@ export const createUserAccount = catchAsync(async (req, res) => {
  * @route POST /api/v1/users/signin
  */
 export const authenticateUser = catchAsync(async (req, res) => {
-  // TODO: Implement user authentication functionality
+
+  const { email, password } = req.body;
+
+  if ([email, password].some((ele) => ele?.trim().length === 0 || !ele)) {
+    throw new AppError('Please provide all fields', 400);
+  }
+
+  const existedUser = await User.findOne({
+    email
+  }).select('+password')
+
+  console.log(existedUser);
+
+  if (!existedUser) {
+    throw new AppError('Please Sign Up first to Sign In', 400);
+  }
+
+  const isPasswordCorrect = await existedUser.comparePassword(password);
+
+  if (!isPasswordCorrect) {
+    throw new AppError('Please enter a correct password', 400);
+  }
+
+  generateToken(res, existedUser, 'Sign in successfull')
 });
 
 /**
@@ -61,6 +84,8 @@ export const authenticateUser = catchAsync(async (req, res) => {
  */
 export const signOutUser = catchAsync(async (_, res) => {
   // TODO: Implement sign out functionality
+
+  res.clearCookies('token').status(200).json(new ApiResponse(200,{},"Sign out successfull"))
 });
 
 /**
