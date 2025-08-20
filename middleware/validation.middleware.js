@@ -77,6 +77,10 @@ export const validateSignup = validate([
     commonValidations.password
 ]);
 
+export const validateEmail =validate([
+    commonValidations.email
+])
+
 export const validateSignin = validate([
     commonValidations.email,
     body('password')

@@ -6,11 +6,13 @@ import {
     deleteUserAccount,
     getCurrentUserProfile,
     signOutUser,
-    updateUserProfile
+    updateUserProfile,
+    forgotPassword,
+    resetPassword
 } from "../controllers/user.controller.js";
 import { isAuthenticated } from "../middleware/auth.middleware.js";
 import upload from "../utils/multer.js";
-import { validateSignup, validateSignin, validatePasswordChange } from "../middleware/validation.middleware.js";
+import { validateSignup, validateSignin, validatePasswordChange, validateEmail } from "../middleware/validation.middleware.js";
 
 const router = express.Router();
 
@@ -33,6 +35,12 @@ router.patch("/change-password",
     validatePasswordChange,
     changeUserPassword
 );
+
+// Request for password reset
+router.post('/forgot-password', validateEmail, forgotPassword)
+
+// Reset password
+router.post("/reset-password/:token", resetPassword);
 
 // Account management
 router.delete("/account", isAuthenticated, deleteUserAccount);
